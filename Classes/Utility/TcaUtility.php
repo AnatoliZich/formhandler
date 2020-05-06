@@ -99,10 +99,10 @@ class TcaUtility
     {
         $pid = false;
 
-        if (is_array($GLOBALS['SOBE']->editconf['tt_content']) && reset($GLOBALS['SOBE']->editconf['tt_content']) === 'new') {
-            $pid = key($GLOBALS['SOBE']->editconf['tt_content']);
+         if (is_array($config['row']) && $this->isNewMode($config['row'])) {
+            $pid = $this->getCurrentPid($config);
 
-            //Formhandler inserted after existing content element
+            // the pid currently is negative but it can be fetched as the tt_content element already exists
             if (intval($pid) < 0) {
                 $conn = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ConnectionPool::class)
                     ->getConnectionForTable('tt_content');
@@ -180,5 +180,28 @@ class TcaUtility
         $TSObj->runThroughTemplates($rootLine);
         $TSObj->generateConfig();
         return $TSObj->setup;
+    }
+
+    /**
+     * Returns true when the current content element is not saved yet.
+     * To to that, the uid is analyzed. Unsaved rows will have a uid like NEW94835728943759089345
+     *
+     * @param array $row
+     * @return bool
+     */
+    protected function isNewMode($row)
+    {
+        return !is_numeric($row['uid']);
+    }
+
+    /**
+     * Mainly used for compatibility reasons. TYPO3 10 servers the pid differently than earlier versions
+     *
+     * @param array $config
+     * @return int
+     */
+    protected function getCurrentPid($config)
+    {
+        return (int)($config['flexParentDatabaseRow']['pid'] ?? $config['row']['pid']);
     }
 }
