@@ -15,6 +15,7 @@ namespace Typoheads\Formhandler\Ajax;
 *
 *                                                                        */
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\PathUtility;
 
 /**
  * A class validating a field via AJAX.
@@ -55,10 +56,14 @@ class Validate
             $errors = [];
             $valid = $validator->validateAjax($field, $gp, $errors);
 
+            $formHandlerPath = PathUtility::stripPathSitePrefix(
+                \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('formhandler')
+            );
+
             if ($valid) {
                 $content = \Typoheads\Formhandler\Utility\GeneralUtility::getSingle($this->settings['ajax.']['config.'], 'ok');
                 if (strlen($content) === 0) {
-                    $content = '<img src="' . \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('formhandler') . 'Resources/Public/Images/ok.png' . '" />';
+                    $content = '<img src="' . $formHandlerPath . 'Resources/Public/Images/ok.png' . '" />';
                 } else {
                     $gp = [
                         $_GET['field'] => $_GET['value']
@@ -70,7 +75,7 @@ class Validate
             } else {
                 $content = \Typoheads\Formhandler\Utility\GeneralUtility::getSingle($this->settings['ajax.']['config.'], 'notOk');
                 if (strlen($content) === 0) {
-                    $content = '<img src="' . \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('formhandler') . 'Resources/Public/Images/notok.png' . '" />';
+                    $content = '<img src="' . $formHandlerPath . 'Resources/Public/Images/notok.png' . '" />';
                 } else {
                     $view = $this->initView($content);
                     $gp = [
