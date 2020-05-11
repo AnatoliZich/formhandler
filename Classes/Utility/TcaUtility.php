@@ -49,47 +49,6 @@ class TcaUtility
     }
 
     /**
-     * Adds onchange listener on the drop down menu "predefined".
-     * If the event is fired and old value was ".default", then empty some fields.
-     *
-     * @param array $config
-     * @return string the javascript
-     * @author Fabien Udriot
-     */
-    public function addFields_predefinedJS($config)
-    {
-        $newRecord = 'true';
-        if (is_array($GLOBALS['SOBE']->editconf['tt_content']) && reset($GLOBALS['SOBE']->editconf['tt_content']) === 'edit') {
-            $newRecord = 'false';
-        }
-
-        $uid = null;
-        if (is_array($GLOBALS['SOBE']->editconf['tt_content'])) {
-            $uid = key($GLOBALS['SOBE']->editconf['tt_content']);
-        }
-        if ($uid < 0 || empty($uid) || !strstr($uid, 'NEW')) {
-            $uid = $GLOBALS['SOBE']->elementsData[0]['uid'];
-        }
-
-        $js = "<script>\n";
-        $js .= "/*<![CDATA[*/\n";
-
-        $divId = $GLOBALS['SOBE']->tceforms->dynNestedStack[0][1];
-        if (!$divId) {
-            $divId = 'DIV.c-tablayer';
-        } else {
-            $divId .= '-DIV';
-        }
-        $js .= "var uid = '" . $uid . "'\n";
-        $js .= "var flexformBoxId = '" . $divId . "'\n";
-        $js .= 'var newRecord = ' . $newRecord . "\n";
-        $js .= file_get_contents(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('formhandler') . 'Resources/Public/JavaScript/addFields_predefinedJS.js');
-        $js .= "/*]]>*/\n";
-        $js .= "</script>\n";
-        return $js;
-    }
-
-    /**
      * Sets the items for the "Predefined" dropdown.
      *
      * @param array $config
@@ -99,7 +58,7 @@ class TcaUtility
     {
         $pid = false;
 
-         if (is_array($config['row']) && $this->isNewMode($config['row'])) {
+         if (is_array($config['row']) && static::isNewMode($config['row'])) {
             $pid = $this->getCurrentPid($config);
 
             // the pid currently is negative but it can be fetched as the tt_content element already exists
@@ -184,18 +143,18 @@ class TcaUtility
 
     /**
      * Returns true when the current content element is not saved yet.
-     * To to that, the uid is analyzed. Unsaved rows will have a uid like NEW94835728943759089345
+     * To do that, the uid is analyzed. Unsaved rows will have a uid like NEW94835728943759089345
      *
-     * @param array $row
+     * @param string|int $uid
      * @return bool
      */
-    protected function isNewMode($row)
+    public static function isNewMode($uid): bool
     {
-        return !is_numeric($row['uid']);
+        return !\TYPO3\CMS\Core\Utility\MathUtility::canBeInterpretedAsInteger($uid) || (int)$uid < 0;
     }
 
     /**
-     * Mainly used for compatibility reasons. TYPO3 10 servers the pid differently than earlier versions
+     * Mainly used for compatibility reasons. TYPO3 10 serves the pid differently than earlier versions
      *
      * @param array $config
      * @return int

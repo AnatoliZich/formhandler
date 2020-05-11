@@ -31,3 +31,9 @@ $iconRegistry->registerIcon(
     \TYPO3\CMS\Core\Imaging\IconProvider\BitmapIconProvider::class,
     ['source' => 'EXT:formhandler/Resources/Public/Images/pagetreeicon.png']
 );
+
+$GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['nodeRegistry'][1588936797] = [
+    'nodeName' => 'FhJsLoader',
+    'priority' => 40,
+    'class' => \Typoheads\Formhandler\Utility\FlexFormJsLoader::class,
+];

@@ -4,7 +4,7 @@
  *
  * $Id: addFields_predefinedJS.js 20791 2009-05-28 07:53:36Z reinhardfuehricht $
  */
-
+// TODO: this is probably broken since templateFile and langFile are now using FAL and function differently
 Event.observe(window, 'load', function() {
 
 	var requiredFieldsDefault = 'firstname, lastname, email';
