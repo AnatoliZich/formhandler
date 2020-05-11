@@ -19,14 +19,54 @@
                                 LLL:EXT:formhandler/Resources/Private/Language/locallang_tca.xml:formhandler.pi_flexform.template_file
                             </label>
                             <config>
-                                <type>group</type>
-                                <internal_type>file</internal_type>
-                                <allowed>tmpl,html,htm</allowed>
-                                <max_size>500</max_size>
-                                <minitems>0</minitems>
+                                <type>inline</type>
+                                <foreign_table>sys_file_reference</foreign_table>
+                                <foreign_field>uid_foreign</foreign_field>
+                                <foreign_sortby>sorting_foreign</foreign_sortby>
+                                <foreign_table_field>tablenames</foreign_table_field>
+                                <foreign_match_fields type="array">
+                                    <!-- Somewhat hacky but has to be done to be able to reference both FAL fields in the flexform -->
+                                    <fieldname>pi_flexform1</fieldname>
+                                </foreign_match_fields>
+                                <foreign_label>uid_local</foreign_label>
+                                <foreign_selector>uid_local</foreign_selector>
                                 <maxitems>1</maxitems>
-                                <size>1</size>
-                                <selectedListStyle>Width:180px</selectedListStyle>
+                                <overrideChildTca type="array">
+                                    <columns type="array">
+                                        <uid_local type="array">
+                                            <config type="array">
+                                                <appearance type="array">
+                                                    <elementBrowserType>file</elementBrowserType>
+                                                    <elementBrowserAllowed>tmpl,html,htm</elementBrowserAllowed>
+                                                </appearance>
+                                            </config>
+                                        </uid_local>
+                                    </columns>
+                                </overrideChildTca>
+                                <filter>
+                                    <el>
+                                        <userFunc>TYPO3\CMS\Core\Resource\Filter\FileExtensionFilter->filterInlineChildren</userFunc>
+                                        <parameters>
+                                            <allowedFileExtensions>tmpl,html,htm</allowedFileExtensions>
+                                        </parameters>
+                                    </el>
+                                </filter>
+                                <appearance>
+                                    <useSortable>true</useSortable>
+                                    <headerThumbnail>
+                                        <field>uid_local</field>
+                                        <width>45</width>
+                                        <height>45c</height>
+                                    </headerThumbnail>
+                                </appearance>
+                                <enabledControls>
+                                    <info>true</info>
+                                    <new>false</new>
+                                    <dragdrop>true</dragdrop>
+                                    <sort>false</sort>
+                                    <hide>true</hide>
+                                    <delete>true</delete>
+                                </enabledControls>
                             </config>
                         </TCEforms>
                     </template_file>
@@ -36,13 +76,54 @@
                                 LLL:EXT:formhandler/Resources/Private/Language/locallang_tca.xml:formhandler.pi_flexform.lang_file
                             </label>
                             <config>
-                                <type>group</type>
-                                <internal_type>file</internal_type>
-                                <allowed>php,xml</allowed>
-                                <max_size>500</max_size>
-                                <minitems>0</minitems>
+                                <type>inline</type>
+                                <foreign_table>sys_file_reference</foreign_table>
+                                <foreign_field>uid_foreign</foreign_field>
+                                <foreign_sortby>sorting_foreign</foreign_sortby>
+                                <foreign_table_field>tablenames</foreign_table_field>
+                                <foreign_match_fields type="array">
+                                    <!-- Somewhat hacky but has to be done to be able to reference both FAL fields in the flexform -->
+                                    <fieldname>pi_flexform2</fieldname>
+                                </foreign_match_fields>
+                                <foreign_label>uid_local</foreign_label>
+                                <foreign_selector>uid_local</foreign_selector>
                                 <maxitems>1</maxitems>
-                                <size>1</size>
+                                <overrideChildTca type="array">
+                                    <columns type="array">
+                                        <uid_local type="array">
+                                            <config type="array">
+                                                <appearance type="array">
+                                                    <elementBrowserType>file</elementBrowserType>
+                                                    <elementBrowserAllowed>xml</elementBrowserAllowed>
+                                                </appearance>
+                                            </config>
+                                        </uid_local>
+                                    </columns>
+                                </overrideChildTca>
+                                <filter>
+                                    <el>
+                                        <userFunc>TYPO3\CMS\Core\Resource\Filter\FileExtensionFilter->filterInlineChildren</userFunc>
+                                        <parameters>
+                                            <allowedFileExtensions>xml</allowedFileExtensions>
+                                        </parameters>
+                                    </el>
+                                </filter>
+                                <appearance>
+                                    <useSortable>true</useSortable>
+                                    <headerThumbnail>
+                                        <field>uid_local</field>
+                                        <width>45</width>
+                                        <height>45c</height>
+                                    </headerThumbnail>
+                                </appearance>
+                                <enabledControls>
+                                    <info>true</info>
+                                    <new>false</new>
+                                    <dragdrop>true</dragdrop>
+                                    <sort>false</sort>
+                                    <hide>true</hide>
+                                    <delete>true</delete>
+                                </enabledControls>
                             </config>
                         </TCEforms>
                     </lang_file>
@@ -65,7 +146,7 @@
                         <TCEforms>
                             <config>
                                 <type>user</type>
-                                <userFunc>Typoheads\Formhandler\Utility\TcaUtility->addFields_predefinedJS</userFunc>
+                                <renderType>FhJsLoader</renderType>
                             </config>
                         </TCEforms>
                     </predefinedJS>
