@@ -26,7 +26,7 @@
                                 <foreign_table_field>tablenames</foreign_table_field>
                                 <foreign_match_fields type="array">
                                     <!-- Somewhat hacky but has to be done to be able to reference both FAL fields in the flexform -->
-                                    <fieldname>pi_flexform1</fieldname>
+                                    <fieldname>pi_flexform_templ</fieldname>
                                 </foreign_match_fields>
                                 <foreign_label>uid_local</foreign_label>
                                 <foreign_selector>uid_local</foreign_selector>
@@ -83,7 +83,7 @@
                                 <foreign_table_field>tablenames</foreign_table_field>
                                 <foreign_match_fields type="array">
                                     <!-- Somewhat hacky but has to be done to be able to reference both FAL fields in the flexform -->
-                                    <fieldname>pi_flexform2</fieldname>
+                                    <fieldname>pi_flexform_lang</fieldname>
                                 </foreign_match_fields>
                                 <foreign_label>uid_local</foreign_label>
                                 <foreign_selector>uid_local</foreign_selector>

@@ -14,6 +14,7 @@ namespace Typoheads\Formhandler\Controller;
  * Public License for more details.                                       *
  *                                                                        */
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use Typoheads\Formhandler\Utility\FlexFormUtility;
 
 /**
  * The Dispatcher instantiates the Component Manager and delegates the process to the given controller.
@@ -75,8 +76,8 @@ class Dispatcher extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
              * - Required fields
              * - Redirect page
              */
-            $templateFile = $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'template_file', 'sDEF');
-            $langFile = $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'lang_file', 'sDEF');
+            $templateFile = FlexFormUtility::fetchFlexformRessource($this->cObj->data['uid'], FlexFormUtility::FETCH_TEMPLATE);
+            $langFile = FlexFormUtility::fetchFlexformRessource($this->cObj->data['uid'], FlexFormUtility::FETCH_LANG);
             $predef = $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'predefined', 'sDEF');
 
             $this->globals->setCObj($this->cObj);
@@ -104,10 +105,10 @@ class Dispatcher extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
             if (isset($content)) {
                 $controller->setContent($this->componentManager->getComponent($this->utilityFuncs->prepareClassName('Typoheads\Formhandler\Controller\Content'), $content));
             }
-            if (strlen($templateFile) > 0) {
+            if ($templateFile !== null) {
                 $controller->setTemplateFile($templateFile);
             }
-            if (strlen($langFile) > 0) {
+            if ($langFile !== null) {
                 $controller->setLangFiles([$langFile]);
             }
             if (strlen($predef) > 0) {
