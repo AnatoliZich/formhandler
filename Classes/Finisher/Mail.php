@@ -14,6 +14,8 @@ namespace Typoheads\Formhandler\Finisher;
      * Public License for more details.                                       *
      *                                                                        */
 
+use TYPO3\CMS\Core\Utility\VersionNumberUtility;
+
 /**
  * Finisher to send mails after successful form submission.
  *
@@ -84,16 +86,35 @@ class Mail extends AbstractFinisher
         return $this->gp;
     }
 
+    /**
+     * Ensures compatibility to TYPO3 versions prior to v10
+     *
+     * @return string
+     */
+    protected function getDefaultMailerName(): string
+    {
+        $mailerName = 'Mailer\SymfonyMailer';
+        $typo3Version = VersionNumberUtility::convertVersionNumberToInteger(
+            VersionNumberUtility::getNumericTypo3Version()
+        );
+        if ($typo3Version < 10000000) {
+            $mailerName = 'Mailer\TYPO3Mailer';
+        }
+
+        return $mailerName;
+    }
+
     protected function initMailer($type)
     {
         //init mailer object
         $globalSettings = $this->globals->getSettings();
+        $defaultMailer = $this->getDefaultMailerName();
         if (is_array($this->settings['mailer.'])) {
-            $emailClass = $this->utilityFuncs->getPreparedClassName($this->settings['mailer.'], 'Mailer\TYPO3Mailer');
+            $emailClass = $this->utilityFuncs->getPreparedClassName($this->settings['mailer.'], $defaultMailer);
         } elseif (is_array($globalSettings['mailer.'])) {
-            $emailClass = $this->utilityFuncs->getPreparedClassName($globalSettings['mailer.'], 'Mailer\TYPO3Mailer');
+            $emailClass = $this->utilityFuncs->getPreparedClassName($globalSettings['mailer.'], $defaultMailer);
         } else {
-            $emailClass = $this->utilityFuncs->prepareClassName('\\Typoheads\\Formhandler\\Mailer\\TYPO3Mailer');
+            $emailClass = $defaultMailer;
         }
 
         $this->emailObj = $this->componentManager->getComponent($emailClass);
@@ -164,6 +185,7 @@ class Mail extends AbstractFinisher
     protected function sendMail($type)
     {
         $doSend = true;
+        // TODO: this is weird. The mail is build even if it was not configured at all. Should be explicit enable
         if (intval($this->utilityFuncs->getSingle($this->settings[$type], 'disable')) === 1) {
             $this->utilityFuncs->debugMessage('mail_disabled', [$type]);
             $doSend = false;
@@ -180,7 +202,9 @@ class Mail extends AbstractFinisher
         }
 
         //set e-mail options
-        $this->emailObj->setSubject($mailSettings['subject']);
+
+        // type cast to string as the setting null when not configured
+        $this->emailObj->setSubject((string)$mailSettings['subject']);
 
         $sender = $mailSettings['sender_email'];
         if (isset($mailSettings['sender_email']) && is_array($mailSettings['sender_email'])) {
@@ -192,7 +216,7 @@ class Mail extends AbstractFinisher
             $senderName = implode(',', $mailSettings['sender_name']);
         }
 
-        $this->emailObj->setSender($sender, $senderName);
+        $this->emailObj->setSender((string)$sender, $senderName);
 
         $replyto = $mailSettings['replyto_email'];
         if (isset($mailSettings['replyto_email']) && is_array($mailSettings['replyto_email'])) {
@@ -203,7 +227,7 @@ class Mail extends AbstractFinisher
         if (isset($mailSettings['replyto_name']) && is_array($mailSettings['replyto_name'])) {
             $replytoName = implode(',', $mailSettings['replyto_name']);
         }
-        $this->emailObj->setReplyTo($replyto, $replytoName);
+        $this->emailObj->setReplyTo((string)$replyto, $replytoName);
 
         $cc = $mailSettings['cc_email'];
         if (!is_array($cc)) {
